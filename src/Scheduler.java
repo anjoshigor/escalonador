@@ -95,7 +95,7 @@ public class Scheduler {
       Job tempJob = runningQueue.poll();
 
       if(tempJob != null){
-        //System.out.print("Rodando processo ["+ tempJob.getPid() + "] de [" + currentTime + "] ate [");
+        System.out.print("Rodando processo ["+ tempJob.getPid() + "] de [" + currentTime + "] ate [");
         if(tempJob.getFirstResponse()){
           tempJob.setTimeResponse(tempJob.getTimeOnQueue());
           tempJob.setFirstResponse(false);
@@ -121,9 +121,9 @@ public class Scheduler {
         this._finishedQueue.add(tempJob);
       }
 
-      //System.out.println(currentTime+"]");
+      System.out.println(currentTime+"]");
     }
-    //logger.printQueue(this._finishedQueue);
+    logger.printQueue(this._finishedQueue);
   }
 
   /**First Come First Service**/
@@ -180,7 +180,11 @@ public class Scheduler {
 
     PriorityQueue<Job> runningQueue = new PriorityQueue<Job>(10, new Comparator<Job>() {
         public int compare(Job jobA, Job jobB) {
-            if (jobA.getTimeNeeded() <= jobB.getTimeNeeded())
+
+            if(jobA.getTimeNeeded() == jobB.getTimeNeeded())
+              return 0;
+
+            if (jobA.getTimeNeeded() < jobB.getTimeNeeded())
               return -1;
             else
               return 1;
@@ -225,7 +229,7 @@ public class Scheduler {
       if(tempJob !=null)
         this._finishedQueue.add(tempJob);
 
-
+        //System.out.println(currentTime+"]");
     }
 
     //logger.printQueue(this._finishedQueue);
