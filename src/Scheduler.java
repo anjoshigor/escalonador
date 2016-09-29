@@ -57,7 +57,7 @@ public class Scheduler {
   public void schedule(){
       switch (this._algorithm) {
         case "RR":
-        roundRobin();
+        roundRobin(2);
         break;
 
         case "FCFS":
@@ -77,9 +77,9 @@ public class Scheduler {
     ********************/
 
   /**Round Robin with quantum = 2**/
-  public void roundRobin(){
+  public void roundRobin(int quantum){
     Queue <Job> runningQueue = new LinkedList<Job>();
-
+    int savedQuantum = quantum;
     int currentTime = 0;
 
     //adding jobs on time 0
@@ -89,7 +89,7 @@ public class Scheduler {
     }
 
     while (this._queueOfJobs.size() > 0 || runningQueue.size() > 0){
-
+      quantum = savedQuantum;
       int auxTime=-1;
 
       Job tempJob = runningQueue.poll();
@@ -100,13 +100,17 @@ public class Scheduler {
           tempJob.setTimeResponse(tempJob.getTimeOnQueue());
           tempJob.setFirstResponse(false);
         }
-        tempJob.decTimeNeeded(2);
-        tempJob.incTimeOnCpu(2);
-        updateQueueTime(runningQueue,2, currentTime);
+
+        if(tempJob.getTimeNeeded()<quantum)
+          quantum = tempJob.getTimeNeeded();
+
+        tempJob.decTimeNeeded(quantum);
+        tempJob.incTimeOnCpu(quantum);
+        updateQueueTime(runningQueue,quantum, currentTime);
         auxTime = tempJob.getTimeNeeded();
 
       }
-      currentTime += 2;
+      currentTime += quantum;
 
       while(this._queueOfJobs.peek() != null && this._queueOfJobs.peek().getTimeArrived() <= currentTime){
         Job jobChangeQueue = this._queueOfJobs.poll();
